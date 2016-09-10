@@ -1,2 +1,2 @@
-# cs190
-CS190 - Computer Organization
+# CS190
+Homework & labs for CS190 - Computer Organization @ Mount Mercy University.
