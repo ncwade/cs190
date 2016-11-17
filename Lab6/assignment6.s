@@ -48,14 +48,73 @@ sw $s2, c_var
 sw $s3, d_var
 sw $s4, e_var
 
+# Print values. Not in original request, added later.
+# We basically print the prefix string, the register value, and the newline char for each.
+li $v0, 4
+la $a0, a_str
+syscall
+li  $v0, 1
+add $a0, $s0, $zero
+syscall
+li $v0, 4
+la $a0, new_line
+syscall
+
+li $v0, 4
+la $a0, b_str
+syscall
+li  $v0, 1
+add $a0, $s1, $zero
+syscall
+li $v0, 4
+la $a0, new_line
+syscall
+
+li $v0, 4
+la $a0, c_str
+syscall
+li  $v0, 1
+add $a0, $s2, $zero
+syscall
+li $v0, 4
+la $a0, new_line
+syscall
+
+li $v0, 4
+la $a0, d_str
+syscall
+li  $v0, 1
+add $a0, $s3, $zero
+syscall
+li $v0, 4
+la $a0, new_line
+syscall
+
+li $v0, 4
+la $a0, e_str
+syscall
+li  $v0, 1
+add $a0, $s4, $zero
+syscall
+li $v0, 4
+la $a0, new_line
+syscall
+# Stop printing values.
+
 # Syscalls to exit cleanly.
 li $v0, 10
 syscall
 
 # Define the variables used in our program.
 .data
-a_var:			.word 5
-b_var:			.word 10
-c_var:			.word 0
-d_var:			.word 0
-e_var:			.word 0
+a_str:      .asciiz  "a: "
+b_str:      .asciiz  "b: "
+c_str:      .asciiz  "c: "
+d_str:      .asciiz  "d: "
+e_str:      .asciiz  "e: "
+new_line:   .asciiz  "\n"
+a_var:   .word 5
+b_var:   .word 10
+c_var:   .word 0
+d_var:   .word 0
+e_var:   .word 0
