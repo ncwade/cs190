@@ -68,7 +68,7 @@ addi $s1, $v0, 0
 
 
 ## Now we perform the logical operations.
-# Determine if $s0 < $s1
+# Determine if $s0 < $s1. It is easiest to do if we invert the given condition.
 bge $s0, $s1, ELSE
 sub $s2, $s1, $s0
 # Note: We need to jump to finish here so we don't hit the else.
