@@ -34,66 +34,20 @@
 # this involves a function calling another function so preserving argument and 
 # return address registers is needed.
 
-# Register usage:
-# $s0 -> start
-# $s1 -> end
-# $s2 -> sum
-
-# Define our entry points.
-# This is sumOfFunction
+# Define main entry point.
 .globl main
 main:
 
-## First get start & end values from the user.
-# First we need to prompt the user for their start number.
-li $v0, 4
-la $a0, p_1
-syscall
-# Now read the number.
-li $v0, 5
-syscall
-addi $s0, $v0, 0
-
-# Now prompt for a end number.
-li $v0, 4
-la $a0, p_1
-syscall
-# Now read the number.
-li $v0, 5
-syscall
-addi $s1, $v0, 0
-
-## Now we perform the logical operations.
-# Determine if $s1 < $s0. It is easiest to do if we invert the given condition.
-bge $s1, $s0, ELSE
-addi $t0, $s1, 0
-addi $s1, $s0, 0
-addi $s0, $t0, 0
-ELSE:
-
-# Zero out $t0 to use as our loop control.
-addi $t0, $s0, 0
-
-# Now loop from $s0 -> $s1.
-LOOP:
-	# Loop control.
-	bgt $t0, $s1, EXIT
-
-	# Prepare to pass "i"($t0) to the function.
-	addi $a0, $t0, 0
-	# Call function.
-	jal FUNCTION
-
-	# Increment "sum" by the return value of "function".
-	add $s2, $s2, $v0
-	# Swing back to the top.
-	addi $t0, $t0, 1
-	j LOOP
-EXIT:
+# Load values into arguement registers.
+addi $a0, $0, 5
+addi $a1, $0, 10
+# Call the function.
+jal SUMOFFUNCTION
+# Retrieve return value.
+addi $s2, $v0, 0
 
 ## Now we do all output operations.
-# Now print the result string.
-FINISH: li $v0, 4
+li $v0, 4
 la $a0, result
 syscall
 # Now print our final integer.
@@ -104,6 +58,56 @@ syscall
 # Needed to cleanly exit QtSpim.
 li $v0, 10
 syscall
+
+# Definition of "sumOfFunction"
+# Register usage:
+# $s0 -> start
+# $s1 -> end
+# $s2 -> sum
+SUMOFFUNCTION:
+	# Load arguements into registers.
+	addi $s0, $a0, 0
+	addi $s1, $a1, 0
+
+	# Store the return address for use later.
+	addi $sp, $sp, -4
+	sw $ra, 0($sp)
+
+	## Now we perform the logical operations.
+	# Determine if $s1 < $s0. It is easiest to do if we invert the given condition.
+	bge $s1, $s0, ELSE
+	addi $t0, $s1, 0
+	addi $s1, $s0, 0
+	addi $s0, $t0, 0
+	ELSE:
+
+	# Zero out $t0 to use as our loop control.
+	addi $t0, $s0, 0
+
+	# Now loop from $s0 -> $s1.
+	LOOP:
+		# Loop control.
+		bgt $t0, $s1, EXIT
+
+		# Prepare to pass "i"($t0) to the function.
+		addi $a0, $t0, 0
+		# Call function.
+		jal FUNCTION
+
+		# Increment "sum" by the return value of "function".
+		add $s2, $s2, $v0
+		# Swing back to the top.
+		addi $t0, $t0, 1
+		j LOOP
+	EXIT:
+
+	# Set return value.
+	addi $v0, $s2, 0
+	# Reset the return address.
+	lw $ra, 0($sp)
+	addi $sp, $sp, 4 
+	jr $ra
+
 
 # Defintion of "function"
 FUNCTION:
@@ -125,5 +129,4 @@ FUNCTION:
 
 # Define the variables used in our program.
 .data
-p_1:      .asciiz "Enter a number: "
-result:   .asciiz "\nThe sum is: "
+result:   .asciiz "\nsum="
